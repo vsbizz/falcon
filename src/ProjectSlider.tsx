@@ -1,6 +1,7 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import RevealingHeading from "./RevealingHeader";
 
 const PROJECTS = [
@@ -144,19 +145,19 @@ const ProjectSlide = ({ project, index, total, scrollYProgress }) => {
           ),
         }}
       >
-        <p className="text-[10px] tracking-[0.35em] text-white/50 mb-3 uppercase">
+        <p className="text-[10px] 2xl:text-xs tracking-[0.35em] text-white/50 mb-3 uppercase">
           {String(index + 1).padStart(2, "0")} &mdash;{" "}
           {String(total).padStart(2, "0")}
         </p>
-        <h3 className="text-2xl lg:text-4xl font-serif uppercase mb-5 leading-tight max-w-sm">
+        <h3 className="text-xl md:text-2xl lg:text-4xl font-serif uppercase mb-5 leading-tight max-w-sm">
           {project.name}
         </h3>
-        <a
-          href={project.link}
+        <Link
+          to={`/services/${project.id === "interiors" ? "luxury-interior-design" : project.id === "visualization" ? "3d-visualization" : "architectural-design"}`}
           className="inline-flex items-center gap-2 text-xs tracking-[0.25em] uppercase border-b border-white/30 pb-1 hover:border-white transition-colors duration-300"
         >
           View Project <ArrowRight className="w-3 h-3" />
-        </a>
+        </Link>
       </motion.div>
 
       {/* Progress indicators */}
@@ -178,6 +179,14 @@ const ProjectSlide = ({ project, index, total, scrollYProgress }) => {
 export default function ProjectsSlider() {
   const containerRef = useRef(null);
   const total = PROJECTS.length;
+  const [multiplier, setMultiplier] = useState(200);
+
+  useEffect(() => {
+    const check = () => setMultiplier(window.innerWidth < 768 ? 120 : 200);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -185,8 +194,10 @@ export default function ProjectsSlider() {
   });
 
   return (
-    <div ref={containerRef} style={{ height: `${total * 200}vh` }}>
-      <RevealingHeading topText="Discover" bottomText="Our Services" />
+    <div ref={containerRef} style={{ height: `${total * multiplier}vh` }}>
+      <div className="px-6 py-8 md:py-16">
+        <RevealingHeading topText="Discover" bottomText="Our Services" />
+      </div>
 
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-black">
         {PROJECTS.map((project, i) => (

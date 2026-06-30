@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -8,10 +8,32 @@
   
   --color-type-light: #ffffff;
   --color-type-dark: #1a1a1a;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--letter-spacing: 0.35em;
+  --text-eyebrow--font-weight: 700;
+
+  --text-eyebrow-sm: 0.6875rem;
+  --text-eyebrow-sm--letter-spacing: 0.2em;
+  --text-eyebrow-sm--font-weight: 700;
+
+  --text-label: 0.625rem;
+  --text-label--letter-spacing: 0.2em;
+  --text-label--font-weight: 700;
+
+  --text-button: 0.875rem;
+  --text-button--letter-spacing: -0.025em;
+  --text-button--font-weight: 600;
 }
 
 @layer base {
   body {
-    @apply bg-white text-type-dark antialiased;
+    @apply bg-white text-type-dark antialiased overflow-x-hidden;
+  }
+}
+
+@media (min-width: 2000px) {
+  html {
+    font-size: 150%;
   }
 }

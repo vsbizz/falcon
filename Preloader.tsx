@@ -41,7 +41,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
           {stage === "reveal" && (
             <motion.div
               key="text-reveal"
-              className="flex items-center font-display text-6xl font-bold uppercase tracking-tighter text-neutral-900"
+              className="flex items-center font-display text-[10vw] sm:text-5xl md:text-6xl font-bold uppercase tracking-tighter text-neutral-900"
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >

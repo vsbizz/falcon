@@ -4,17 +4,30 @@ import {
   useTransform,
   useSpring,
   useInView,
+  useMotionValue,
+  useAnimationFrame,
   AnimatePresence,
 } from "motion/react";
-import { useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import ProjectsSlider from "./ProjectSlider";
 import ProjectsGridSection from "./ProjectsGridSection";
 import HoldingSection from "./Hero";
-import MasterSection from "./MasterSection";
 import RevealingHeading from "./RevealingHeader";
 import Preloader from "@/Preloader";
+import { ALL_POSTS } from "./pages/blogData";
 import CaseStudies from "./caseStudies";
+import NavOverlay from "./Nav";
+import NavBar from "./NavBar";
+import AboutPage from "./pages/About";
+import ServicesPage from "./pages/Services";
+import BlogPage from "./pages/Blog";
+import BlogPostPage from "./pages/BlogPostPage";
+import ContactPage from "./pages/Contact";
+import Sitemap from "./pages/Sitemap";
+import ContactSection from "./ContactSection";
+import ServicePage from "./services/ServicePage";
+import Footer from "./Footer";
 
 const IntroMorphSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -144,9 +157,9 @@ const SpiralSection = () => {
    * Faster + smoother cinematic response
    */
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 28,
-    damping: 32,
-    mass: 0.9,
+    stiffness: 50,
+    damping: 30,
+    mass: 0.6,
     restDelta: 0.0001,
   });
 
@@ -155,131 +168,198 @@ const SpiralSection = () => {
    */
   const totalRotation = useTransform(smoothProgress, [0, 1], [0, 180]);
 
+  const doubled = [...spiralImages, ...spiralImages];
+
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const setWidthRef = useRef(0);
+
+  useEffect(() => {
+    if (carouselRef.current) {
+      setWidthRef.current = carouselRef.current.scrollWidth / 2;
+    }
+  }, []);
+
+  const speed = 100;
+
+  useAnimationFrame((_, delta) => {
+    if (setWidthRef.current === 0) return;
+    let newX = x.get() - speed * (delta / 1000);
+    if (newX <= -setWidthRef.current) {
+      newX += setWidthRef.current;
+    }
+    x.set(newX);
+  });
+
   return (
-    <section
-      ref={containerRef}
-      /**
-       * Reduced height
-       * Less unnecessary scrolling
-       */
-      className="relative z-50 h-[320svh] bg-[#F8F7F4]"
-    >
-      <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
-        <div className="relative flex h-full w-full items-center justify-center">
-          {spiralImages.map((img, i) => {
-            const angleOffset = -20 + (i / spiralImages.length) * 360;
-            /**
-             * Faster image entry timing
-             */
-            const imageStart = i * 0.022;
-
-            /**
-             * Longer orbit before stacking
-             */
-            const imageEnd = 0.82 + i * 0.025;
-
-            /**
-             * Circular rotation
-             */
-            const rotation = useTransform(
-              totalRotation,
-              (r) => r + angleOffset,
-            );
-
-            /**
-             * Starts farther from edge
-             * Creates premium cinematic entrance
-             */
-            const imageRadius = useTransform(
-              smoothProgress,
-              [imageStart, imageEnd],
-              [72, 0],
-            );
-
-            /**
-             * Smooth fade-in
-             */
-            const opacity = useTransform(
-              smoothProgress,
-              [imageStart, imageStart + 0.045],
-              [0, 1],
-            );
-
-            /**
-             * Scale animation
-             */
-            const scale = useTransform(
-              smoothProgress,
-              [imageStart, imageStart + 0.07],
-              [0.72, 1],
-            );
-
-            return (
-              <motion.div
-                key={i}
-                style={{
-                  rotate: rotation,
-                  width: "100%",
-                  position: "absolute",
-                  opacity,
-                  zIndex: spiralImages.length - i,
-                }}
-                className="pointer-events-none flex h-1 origin-center items-center justify-center"
-              >
-                <motion.div
-                  className="pointer-events-auto aspect-[4/3] w-[42vw] overflow-hidden rounded-sm bg-white shadow-2xl md:w-[40vw]"
-                  style={{
-                    /**
-                     * Main spiral movement
-                     */
-                    x: useTransform(imageRadius, (r) => `${r}vw`),
-
-                    /**
-                     * Keeps images upright
-                     */
-                    rotateZ: useTransform(rotation, (r) => -r),
-
-                    scale,
-                  }}
-                >
-                  <img
-                    src={img.src}
-                    className="h-full w-full object-cover"
-                    alt=""
-                    draggable={false}
-                  />
-                </motion.div>
-              </motion.div>
-            );
-          })}
+    <>
+      {/* ─── Mobile carousel ─── */}
+      <section className="md:hidden relative z-50 py-20 bg-[#F8F7F4] overflow-hidden">
+        <div className="px-6 mb-20">
+          <h2 className="font-display text-[14vw] uppercase tracking-tighter text-neutral-900 leading-[0.85]">
+            Every Space
+          </h2>
+          <h2 className="font-serif italic text-[11vw] text-neutral-900 leading-[0.9] mt-4">
+            Tells a Story
+          </h2>
         </div>
-      </div>
-    </section>
+        <div className="overflow-hidden">
+          <motion.div
+            ref={carouselRef}
+            style={{ x }}
+            className="flex gap-4"
+          >
+            {doubled.map((img, i) => (
+              <div
+                key={i}
+                className="shrink-0 w-[70vw] aspect-[4/3] overflow-hidden shadow-xl"
+              >
+                <img
+                  src={img.src}
+                  alt=""
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+        <div className="flex justify-center mt-20">
+          <Link
+            to="/contact"
+            className="inline-block font-sans text-button uppercase tracking-[0.15em] text-white bg-neutral-900 px-8 py-4 hover:bg-neutral-800 transition-colors"
+          >
+            Browse Portfolio
+          </Link>
+        </div>
+      </section>
+
+      {/* ─── Desktop spiral ─── */}
+      <section
+        ref={containerRef}
+        /**
+         * Reduced height
+         * Less unnecessary scrolling
+         */
+        className="hidden md:block relative z-50 h-[160svh] bg-[#F8F7F4]"
+      >
+        <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
+          <div className="relative flex h-full w-full items-center justify-center">
+            {spiralImages.map((img, i) => {
+              const angleOffset = -20 + (i / spiralImages.length) * 360;
+              /**
+               * Faster image entry timing
+               */
+              const imageStart = i * 0.022;
+
+              /**
+               * Longer orbit before stacking
+               */
+              const imageEnd = 0.82 + i * 0.025;
+
+              /**
+               * Circular rotation
+               */
+              const rotation = useTransform(
+                totalRotation,
+                (r) => r + angleOffset,
+              );
+
+              /**
+               * Starts farther from edge
+               * Creates premium cinematic entrance
+               */
+              const imageRadius = useTransform(
+                smoothProgress,
+                [imageStart, imageEnd],
+                [72, 0],
+              );
+
+              /**
+               * Smooth fade-in
+               */
+              const opacity = useTransform(
+                smoothProgress,
+                [imageStart, imageStart + 0.045],
+                [0, 1],
+              );
+
+              /**
+               * Scale animation
+               */
+              const scale = useTransform(
+                smoothProgress,
+                [imageStart, imageStart + 0.07],
+                [0.72, 1],
+              );
+
+              return (
+                <motion.div
+                  key={i}
+                  style={{
+                    rotate: rotation,
+                    width: "100%",
+                    position: "absolute",
+                    opacity,
+                    zIndex: spiralImages.length - i,
+                  }}
+                  className="pointer-events-none flex h-1 origin-center items-center justify-center"
+                >
+                  <motion.div
+                    className="pointer-events-auto aspect-[4/3] w-[42vw] overflow-hidden rounded-sm bg-white shadow-2xl md:w-[40vw]"
+                    style={{
+                      /**
+                       * Main spiral movement
+                       */
+                      x: useTransform(imageRadius, (r) => `${r}vw`),
+
+                      /**
+                       * Keeps images upright
+                       */
+                      rotateZ: useTransform(rotation, (r) => -r),
+
+                      scale,
+                    }}
+                  >
+                    <img
+                      src={img.src}
+                      className="h-full w-full object-cover"
+                      alt=""
+                      draggable={false}
+                    />
+                  </motion.div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 const ReviewsSection = () => {
   const testimonials = [
     {
       quote:
-        "Félix brought clarity, initiative and reliability to a fast-paced, AI-driven competition. The project ended up winning, a great outcome for a collaboration we genuinely recommend and would repeat again.",
+        "Falcon brought clarity, initiative and reliability to a fast-paced, AI-driven competition. The project ended up winning, a great outcome for a collaboration we genuinely recommend and would repeat again.",
       author: "SANZPONT AWARD-WINNING",
       category: "ARCHITECTURE FIRM",
     },
     {
       quote:
-        '"INSPIRE" helped us understand our strengths and focus on what truly matters in our studio. Félix exceeded our expectations, his insights on processes, client acquisition and positioning were especially valuable.',
+        '"INSPIRE" helped us understand our strengths and focus on what truly matters in our studio. Falcon exceeded our expectations, his insights on processes, client acquisition and positioning were especially valuable.',
       author: "NUA",
       category: "ARCHITECTURE FIRM",
     },
     {
       quote:
-        'The whole experience felt warm, coherent and genuinely empathetic. Félix quickly understood my studio and the essence of my work. "INSPIRE" added real quality and value, helping me strengthen my positioning within my niche.',
+        'The whole experience felt warm, coherent and genuinely empathetic. Falcon quickly understood my studio and the essence of my work. "INSPIRE" added real quality and value, helping me strengthen my positioning within my niche.',
       author: "Romina Ross",
       category: "RO ARCHITECTURE",
     },
     {
       quote:
-        "Félix delivered outstanding videos for an international sports event under intense deadlines. He understood every indication, added high-value proposals and made the whole process smooth and collaborative. The final result was excellent and visually spectacular.",
+        "Falcon delivered outstanding videos for an international sports event under intense deadlines. He understood every indication, added high-value proposals and made the whole process smooth and collaborative. The final result was excellent and visually spectacular.",
       author: "Simone Vela",
       category: "SV DESIGN",
     },
@@ -298,13 +378,68 @@ const ReviewsSection = () => {
     "https://cdn.prod.website-files.com/68b71f6389ec905c7b57de05/68b99517cb2be7e369b5f1af_modon.avif",
   ];
 
+  const logoRef = useRef<HTMLDivElement>(null);
+  const logoX = useMotionValue(0);
+  const logoSetWidth = useRef(0);
+
+  const testimonialsRef = useRef<HTMLDivElement>(null);
+  const testimonialsX = useMotionValue(0);
+  const testimonialsSetWidth = useRef(0);
+
+  useEffect(() => {
+    if (logoRef.current) {
+      logoSetWidth.current = logoRef.current.scrollWidth / 2;
+    }
+    if (testimonialsRef.current) {
+      testimonialsSetWidth.current = testimonialsRef.current.scrollWidth / 2;
+    }
+  }, []);
+
+  useAnimationFrame((_, delta) => {
+    if (logoSetWidth.current > 0) {
+      let newX = logoX.get() - 40 * (delta / 1000);
+      if (newX <= -logoSetWidth.current) newX += logoSetWidth.current;
+      logoX.set(newX);
+    }
+    if (testimonialsSetWidth.current > 0) {
+      let newX = testimonialsX.get() - 30 * (delta / 1000);
+      if (newX <= -testimonialsSetWidth.current) newX += testimonialsSetWidth.current;
+      testimonialsX.set(newX);
+    }
+  });
+
   return (
     <section className="bg-luxury-bg py-32 overflow-hidden">
       <div className="container mx-auto px-6">
         {/* Header */}
         <RevealingHeading topText="What people" bottomText="say about Us" />
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-24">
+        {/* Testimonials - Mobile carousel */}
+        <div className="md:hidden overflow-hidden mb-12">
+          <motion.div
+            ref={testimonialsRef}
+            style={{ x: testimonialsX }}
+            className="flex gap-4"
+          >
+            {[...testimonials, ...testimonials].map((t, i) => (
+              <div
+                key={i}
+                className="shrink-0 w-[80vw] flex flex-col justify-between border border-black/10 bg-white/40 p-6 pt-8 min-h-[280px]"
+              >
+                <p className="font-sans text-[11px] uppercase tracking-[0.12em] leading-[1.8] text-neutral-800 font-medium">
+                  {t.quote}
+                </p>
+                <div className="mt-8 flex flex-wrap items-center gap-1.5 text-[10px] tracking-[0.3em] font-medium text-neutral-500 uppercase">
+                  <span>{t.author}</span>
+                  <span className="opacity-40 ml-1">/</span>
+                  <span className="opacity-70">{t.category}</span>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Testimonials - Desktop grid */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-24">
           {testimonials.map((t, i) => (
             <motion.div
               key={i}
@@ -312,13 +447,13 @@ const ReviewsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="flex flex-col justify-between border border-black/10 bg-white/40 p-8 pt-10 min-h-[420px] transition-all duration-700 hover:shadow-2xl hover:shadow-black/5"
+              className="flex flex-col justify-between border border-black/10 bg-white/40 p-6 pt-8 md:p-8 md:pt-10 min-h-[280px] md:min-h-[420px] transition-all duration-700 hover:shadow-2xl hover:shadow-black/5"
             >
-              <p className="font-sans text-[10.5px] uppercase tracking-[0.12em] leading-[1.8] text-neutral-800 font-medium">
+              <p className="font-sans text-xs 2xl:text-sm uppercase tracking-[0.12em] leading-[1.8] text-neutral-800 font-medium">
                 {t.quote}
               </p>
 
-              <div className="mt-12 flex flex-wrap items-center gap-1.5 text-[8.5px] tracking-[0.3em] font-medium text-neutral-500 uppercase">
+              <div className="mt-12 flex flex-wrap items-center gap-1.5 text-[10px] 2xl:text-xs tracking-[0.3em] font-medium text-neutral-500 uppercase">
                 <span>{t.author}</span>
                 <span className="opacity-40 ml-1">/</span>
                 <span className="opacity-70">{t.category}</span>
@@ -335,12 +470,8 @@ const ReviewsSection = () => {
 
           <div className="flex overflow-hidden relative">
             <motion.div
-              animate={{ x: ["0%", "-50%"] }} // Perfectly seamless with 2 sets
-              transition={{
-                duration: 35,
-                repeat: Infinity,
-                ease: "linear",
-              }}
+              ref={logoRef}
+              style={{ x: logoX }}
               className="flex whitespace-nowrap gap-14 py-6 flex-none items-center"
             >
               {/* Pair of sets for infinite loop */}
@@ -362,33 +493,14 @@ const ReviewsSection = () => {
 };
 
 const BlogSection = () => {
-  const posts = [
-    {
-      label: "RESIDENTIAL",
-      title: "IDENTITY MAGAZINE",
-      description:
-        "A Fine Balance - This home by Elicyon creates a sense of intimacy at every turn",
-      image:
-        "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop",
-      overlay: "identity",
-    },
-    {
-      label: "INSIGHT",
-      title: "A DUBAI VILLA OF QUIET GRANDEUR AND CRAFTED DETAIL",
-      description: "",
-      image:
-        "https://images.unsplash.com/photo-1615874959474-d609969a20ed?q=80&w=1000&auto=format&fit=crop",
-      overlay: "",
-    },
-    {
-      label: "COMMERCIAL",
-      title: "DESIGN ANTHOLOGY UK",
-      description: "Commercial Design Reimagined",
-      image:
-        "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop",
-      overlay: "design anthology",
-    },
-  ];
+  const featured = ALL_POSTS.slice(0, 3);
+  const posts = featured.map((p) => ({
+    slug: p.slug,
+    label: p.category,
+    title: p.title,
+    description: p.excerpt,
+    image: p.image,
+  }));
 
   return (
     <section className="bg-[#f8f7f5] py-32 md:py-48">
@@ -396,12 +508,12 @@ const BlogSection = () => {
         {/* Header */}
         <RevealingHeading topText="Explore" bottomText="Insights and Blogs" />
         <div className="flex flex-col md:flex-row justify-end items-start md:items-end mb-24 gap-8">
-          <a
-            href="#"
-            className="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-neutral-900 border-b border-neutral-900 pb-1 hover:opacity-60 transition-opacity whitespace-nowrap"
+          <Link
+            to="/blog"
+            className="font-sans text-[10px] md:text-xs 2xl:text-sm font-bold tracking-[0.2em] text-neutral-900 border-b border-neutral-900 pb-1 hover:opacity-60 transition-opacity whitespace-nowrap"
           >
             EXPLORE INSIGHTS
-          </a>
+          </Link>
         </div>
 
         {/* Posts Grid */}
@@ -426,17 +538,11 @@ const BlogSection = () => {
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
-                {post.overlay && (
-                  <div className="absolute inset-0 flex items-start justify-center pt-20">
-                    <span className="font-serif text-white text-7xl md:text-5xl lg:text-7xl opacity-90 tracking-tighter mix-blend-difference">
-                      {post.overlay}
-                    </span>
-                  </div>
-                )}
+
               </div>
 
               <div className="flex flex-col">
-                <span className="font-sans text-[10px] tracking-[0.3em] font-bold text-neutral-400 mb-4 uppercase">
+                <span className="font-sans text-eyebrow uppercase text-neutral-400 mb-4">
                   {post.label}
                 </span>
                 <h3 className="font-serif text-xl md:text-2xl text-neutral-900 leading-snug mb-4">
@@ -447,12 +553,12 @@ const BlogSection = () => {
                     {post.description}
                   </p>
                 )}
-                <a
-                  href="#"
-                  className="font-sans text-[10px] tracking-[0.2em] font-bold text-neutral-900 border-b border-neutral-900 w-fit pb-1 hover:opacity-60 transition-opacity"
+                <Link
+                  to={`/blog/${post.slug}`}
+                  className="font-sans text-label uppercase text-neutral-900 border-b border-neutral-900 w-fit pb-1 hover:opacity-60 transition-opacity"
                 >
                   READ MORE
-                </a>
+                </Link>
               </div>
             </motion.div>
           ))}
@@ -462,141 +568,111 @@ const BlogSection = () => {
   );
 };
 
-const Footer = () => {
-  return (
-    <footer className="bg-[#666666] pt-24 pb-12 text-white">
-      <div className="container mx-auto px-8 md:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8 mb-24">
-          {/* Logo & Intro */}
-          <div className="md:col-span-5 flex flex-col items-start">
-            <span className="font-sans font-bold text-2xl tracking-tighter text-white mb-8 lowercase">
-              falcon design
-            </span>
-            <p className="font-sans text-sm text-white/70 leading-relaxed max-w-xs mb-8">
-              Crafting visual narratives for the world's most ambitious
-              architecture and design practices.
-            </p>
-            <div className="flex gap-6 mt-auto">
-              {["Instagram", "LinkedIn", "Vimeo"].map((link) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="font-sans text-[10px] tracking-[0.2em] uppercase font-bold text-neutral-300 hover:text-white transition-colors"
-                >
-                  {link}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Navigation Grid */}
-          <div className="md:col-span-7 grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <div>
-              <h4 className="font-sans text-[10px] tracking-[0.3em] font-bold text-neutral-400 uppercase mb-8">
-                Work
-              </h4>
-              <ul className="flex flex-col gap-4">
-                {["Residential", "Commercial", "Cultural", "Hospitality"].map(
-                  (item) => (
-                    <li key={item}>
-                      <a
-                        href="#"
-                        className="font-sans text-sm text-white/90 hover:text-white transition-all underline-offset-4 hover:underline"
-                      >
-                        {item}
-                      </a>
-                    </li>
-                  ),
-                )}
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-sans text-[10px] tracking-[0.3em] font-bold text-neutral-400 uppercase mb-8">
-                Agency
-              </h4>
-              <ul className="flex flex-col gap-4">
-                {["About", "Services", "News", "Careers"].map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="font-sans text-sm text-white/90 hover:text-white transition-all underline-offset-4 hover:underline"
-                    >
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="col-span-full lg:col-span-2">
-              <div>
-                <h5 className="font-serif italic text-xl mb-4 text-white">
-                  Address
-                </h5>
-                <p className="font-sans text-[12px] text-neutral-300 leading-relaxed uppercase tracking-widest">
-                  Studio Dubai
-                  <br />
-                  International House
-                </p>
-                <h5 className="font-serif italic text-xl my-4 text-white">
-                  Phone
-                </h5>
-                <p className="font-sans text-[12px] text-neutral-300 leading-relaxed uppercase tracking-widest">
-                  +44 (0) 20 7123 4567
-                </p>
-                <h5 className="font-serif italic text-xl my-4 text-white">
-                  Email
-                </h5>
-                <p className="font-sans text-[12px] text-neutral-300 leading-relaxed tracking-widest">
-                  hi@falcondesign.com
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Legal & Copyright */}
-        <div className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex gap-8">
-            <a
-              href="#"
-              className="font-sans text-[9px] tracking-[0.2em] text-neutral-400 font-bold uppercase hover:text-white transition-colors"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="#"
-              className="font-sans text-[9px] tracking-[0.2em] text-neutral-400 font-bold uppercase hover:text-white transition-colors"
-            >
-              Terms of Service
-            </a>
-          </div>
-          <p className="font-sans text-[9px] tracking-[0.2em] text-neutral-500 font-bold uppercase">
-            © {new Date().getFullYear()} FALCON DESIGN | ALL RIGHTS RESERVED.
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-};
-
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [navOpen, setNavOpen] = useState(false);
+
+  const onToggleNav = () => setNavOpen((v) => !v);
+  const onCloseNav = () => setNavOpen(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setIsLoading(true);
+  }, [location.pathname]);
+
   return (
     <main className="bg-white">
+      <NavOverlay isOpen={navOpen} onClose={onCloseNav} />
+      <NavBar navOpen={navOpen} onToggleNav={onToggleNav} />
       <AnimatePresence mode="wait">
         {isLoading && (
-          <Preloader key="preloader" onComplete={() => setIsLoading(false)} />
+          <Preloader key={`preloader-${location.pathname}`} onComplete={() => setIsLoading(false)} />
         )}
       </AnimatePresence>
 
-      <HoldingSection />
-      <IntroMorphSection />
-      <SpiralSection />
-      <ProjectsSlider />
-      <ProjectsGridSection />
-      <CaseStudies />
-      <ReviewsSection />
-      <BlogSection />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
+        >
+          <Routes location={location}>
+            <Route
+              path="/"
+              element={
+                <>
+                  <HoldingSection />
+                  <div className="flex flex-col md:block">
+                    <div className="order-2 md:order-1">
+                      <IntroMorphSection />
+                    </div>
+                    <div className="order-1 md:order-2">
+                      <SpiralSection />
+                    </div>
+                  </div>
+                  <ProjectsSlider />
+                  <ProjectsGridSection />
+                  <CaseStudies />
+                  <ReviewsSection />
+                  <BlogSection />
+                  <ContactSection />
+                </>
+              }
+            />
+            <Route
+              path="/about"
+              element={<AboutPage />}
+            />
+            <Route
+              path="/services"
+              element={<ServicesPage />}
+            />
+            <Route
+              path="/blog"
+              element={<BlogPage />}
+            />
+            <Route
+              path="/blog/:slug"
+              element={<BlogPostPage />}
+            />
+            <Route
+              path="/contact"
+              element={<ContactPage />}
+            />
+            <Route
+              path="/sitemap"
+              element={<Sitemap />}
+            />
+            <Route
+              path="/services/architectural-design"
+              element={<ServicePage slug="architectural-design" />}
+            />
+            <Route
+              path="/services/luxury-interior-design"
+              element={<ServicePage slug="luxury-interior-design" />}
+            />
+            <Route
+              path="/services/3d-visualization"
+              element={<ServicePage slug="3d-visualization" />}
+            />
+            <Route
+              path="/services/walkthroughs"
+              element={<ServicePage slug="walkthroughs" />}
+            />
+            <Route
+              path="/services/virtual-reality"
+              element={<ServicePage slug="virtual-reality" />}
+            />
+            <Route
+              path="/services/consultancy"
+              element={<ServicePage slug="consultancy" />}
+            />
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
       <Footer />
     </main>
   );
