@@ -4,19 +4,19 @@ import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 const TESTIMONIALS = [
   {
     quote:
-      "Félix brought clarity, initiative and reliability to a fast-paced, AI-driven competition. The project ended up winning.",
+      "Falcon brought clarity, initiative and reliability to a fast-paced, AI-driven competition. The project ended up winning.",
     author: "SANZPONT",
     category: "ARCHITECTURE FIRM",
   },
   {
     quote:
-      "\"INSPIRE\" helped us understand our strengths and focus on what truly matters. Félix exceeded our expectations.",
+      "\"INSPIRE\" helped us understand our strengths and focus on what truly matters. Falcon exceeded our expectations.",
     author: "NUA",
     category: "ARCHITECTURE FIRM",
   },
   {
     quote:
-      "The whole experience felt warm, coherent and genuinely empathetic. Félix quickly understood the essence of my work.",
+      "The whole experience felt warm, coherent and genuinely empathetic. Falcon quickly understood the essence of my work.",
     author: "Romina Ross",
     category: "RO ARCHITECTURE",
   },

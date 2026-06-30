@@ -341,25 +341,25 @@ const ReviewsSection = () => {
   const testimonials = [
     {
       quote:
-        "Félix brought clarity, initiative and reliability to a fast-paced, AI-driven competition. The project ended up winning, a great outcome for a collaboration we genuinely recommend and would repeat again.",
+        "Falcon brought clarity, initiative and reliability to a fast-paced, AI-driven competition. The project ended up winning, a great outcome for a collaboration we genuinely recommend and would repeat again.",
       author: "SANZPONT AWARD-WINNING",
       category: "ARCHITECTURE FIRM",
     },
     {
       quote:
-        '"INSPIRE" helped us understand our strengths and focus on what truly matters in our studio. Félix exceeded our expectations, his insights on processes, client acquisition and positioning were especially valuable.',
+        '"INSPIRE" helped us understand our strengths and focus on what truly matters in our studio. Falcon exceeded our expectations, his insights on processes, client acquisition and positioning were especially valuable.',
       author: "NUA",
       category: "ARCHITECTURE FIRM",
     },
     {
       quote:
-        'The whole experience felt warm, coherent and genuinely empathetic. Félix quickly understood my studio and the essence of my work. "INSPIRE" added real quality and value, helping me strengthen my positioning within my niche.',
+        'The whole experience felt warm, coherent and genuinely empathetic. Falcon quickly understood my studio and the essence of my work. "INSPIRE" added real quality and value, helping me strengthen my positioning within my niche.',
       author: "Romina Ross",
       category: "RO ARCHITECTURE",
     },
     {
       quote:
-        "Félix delivered outstanding videos for an international sports event under intense deadlines. He understood every indication, added high-value proposals and made the whole process smooth and collaborative. The final result was excellent and visually spectacular.",
+        "Falcon delivered outstanding videos for an international sports event under intense deadlines. He understood every indication, added high-value proposals and made the whole process smooth and collaborative. The final result was excellent and visually spectacular.",
       author: "Simone Vela",
       category: "SV DESIGN",
     },

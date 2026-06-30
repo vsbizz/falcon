@@ -8,16 +8,16 @@ import {
 } from "framer-motion";
 
 const PROJECT_IMAGES = [
-  { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a859206f8dac87c4c0b553_MERSI%20x%20LEVALLOIS-2%20(1).webp", title: "Naya", category: "Résidentiel" },
+  { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a859206f8dac87c4c0b553_MERSI%20x%20LEVALLOIS-2%20(1).webp", title: "Naya", category: "Residential " },
   { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a85c648569d5ab75b8d1a3_MERSI%20x%20MAURICE_-6.webp", title: "Maurice Cafe St-Honore", category: "Hospitality" },
-  { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a85c20c68e51f70e07786b_CC_MERSIxBERRI-24%20(1).webp", title: "Berri", category: "Résidentiel" },
+  { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a85c20c68e51f70e07786b_CC_MERSIxBERRI-24%20(1).webp", title: "Berri", category: "Residential " },
   { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a85dced45ab84536e7cd04_MERSI%20x%20MAURICE_-16.webp", title: "Maurice Cafe", category: "Hospitality" },
   { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a85beae7ee6ecaf8863ba3_CC_Mersi%20x%20Restaurant%20COOK-2.webp", title: "Cook Restaurant", category: "Retail" },
-  { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/699ec2802ca327082f12fb8c_Cover%20R.webp", title: "Project R", category: "Résidentiel" },
+  { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/699ec2802ca327082f12fb8c_Cover%20R.webp", title: "Project R", category: "Residential " },
   { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/699dcffd7c4bc95194bed857_Cover%20R.webp", title: "Project R2", category: "Retail" },
   { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a858a21313048249c36dc2_MERSI%20x%20AURE%CC%81LIEN%20COHEN-4%20(1).webp", title: "Aurelien Cohen", category: "Retail" },
   { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/699dd9281a44841220d126ec_Cover%20R.webp", title: "Project R3", category: "Hospitality" },
-  { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a858a21313048249c36dc2_MERSI%20x%20AURE%CC%81LIEN%20COHEN-4%20(1).webp", title: "Aurelien Cohen 2", category: "Résidentiel" },
+  { src: "https://cdn.prod.website-files.com/697096b6dde8a7564252bfdd/69a858a21313048249c36dc2_MERSI%20x%20AURE%CC%81LIEN%20COHEN-4%20(1).webp", title: "Aurelien Cohen 2", category: "RResidential " },
 ];
 
 const TitleWord = ({ word, wordIndex, totalWords, smoothProgress }: any) => {
@@ -214,7 +214,7 @@ const ProjectsGridSection = () => {
             style={{ top: filterTop, left: "50%", x: "-50%", position: "absolute", zIndex: 100 }}
             className="pointer-events-auto flex gap-4 md:gap-6 px-4 md:px-8 py-3 bg-[#D6D1C9]/60 backdrop-blur-md rounded-md text-[9px] md:text-[10px] 2xl:text-sm uppercase tracking-[0.25em] font-bold text-neutral-700 shadow-sm"
           >
-            {["All", "Résidentiel", "Retail", "Hospitality"].map((f) => (
+            {["All", "RResidential ", "Retail", "Hospitality"].map((f) => (
               <span
                 key={f}
                 onClick={() => setFilter(f)}
