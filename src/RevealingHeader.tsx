@@ -12,7 +12,7 @@ const RevealingHeading = ({
   // Shared transition setting for a high-end, smooth feel
   const smoothTransition = {
     duration: 1.5,
-    ease: [0.22, 1, 0.36, 1], // Custom "Expo Out" curve for a more fluid swoop
+    ease: [0.22, 1, 0.36, 1] as const,
   };
 
   return (
@@ -20,10 +20,10 @@ const RevealingHeading = ({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-100px" }}
-      className={`flex flex-col items-center ${className}`}
+      className={`flex flex-col items-start w-full ${className}`}
     >
       {/* Top Line: Serif/Italic */}
-      <div className="overflow-hidden w-full flex justify-center">
+      <div className="overflow-hidden w-full flex">
         <motion.span
           variants={{
             hidden: {
@@ -43,14 +43,14 @@ const RevealingHeading = ({
               },
             },
           }}
-          className="font-serif italic text-6xl md:text-8xl text-neutral-800 leading-tight whitespace-nowrap"
+          className="font-serif italic text-[13vw] md:text-6xl lg:text-8xl text-neutral-800 leading-tight text-left"
         >
           {topText}
         </motion.span>
       </div>
 
       {/* Bottom Line: Sans/Bold */}
-      <div className="overflow-hidden w-full flex justify-center -mt-2">
+      <div className="overflow-hidden w-full flex -mt-2">
         <motion.span
           variants={{
             hidden: { y: "100%" },
@@ -62,7 +62,7 @@ const RevealingHeading = ({
               },
             },
           }}
-          className="font-sans font-bold text-6xl md:text-8xl text-neutral-900 uppercase tracking-tighter"
+          className="font-sans font-bold text-[13vw] md:text-6xl lg:text-8xl text-neutral-900 uppercase tracking-tighter"
         >
           {bottomText}
         </motion.span>

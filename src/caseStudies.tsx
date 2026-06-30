@@ -1,5 +1,6 @@
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import RevealingHeading from "./RevealingHeader";
 
 const studies = [
@@ -48,7 +49,16 @@ const H_END = 0.92;
 const DWELL_THRESHOLD = 200;
 
 const CaseStudies = () => {
+  const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [multiplier, setMultiplier] = useState(140);
+
+  useEffect(() => {
+    const check = () => setMultiplier(window.innerWidth < 768 ? 80 : 140);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const dwellBucket = useRef(0);
   const isDwelling = useRef(false);
@@ -189,7 +199,7 @@ const CaseStudies = () => {
       }
 
       // ── Normal horizontal scroll ─────────────────────────────────
-      const speed = 1.2 / window.innerHeight;
+      const speed = 0.4 / window.innerHeight;
       const next = Math.max(H_START, Math.min(H_END, p + delta * speed));
       jumpTo(next);
     };
@@ -275,10 +285,10 @@ const CaseStudies = () => {
     <section
       ref={containerRef}
       className="relative bg-[#F8F7F4] py-32"
-      style={{ height: `${SLIDE_COUNT * 140}svh` }}
+      style={{ height: `${SLIDE_COUNT * multiplier}svh` }}
     >
       {/* HEADING */}
-      <div className="flex flex-col gap-10 pb-12 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex flex-col gap-10 pb-12 px-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <RevealingHeading topText="Selected" bottomText="Case Studies" />
         </div>
@@ -287,7 +297,7 @@ const CaseStudies = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1 }}
-          className="max-w-xl text-base leading-relaxed text-black/55 md:text-lg"
+          className="max-w-xl text-base leading-relaxed text-black/55 md:text-lg lg:text-xl"
         >
           Transforming complex design challenges into immersive digital
           experiences through cinematic storytelling and premium interaction
@@ -397,7 +407,7 @@ const CaseStudies = () => {
                 return (
                   <section
                     key={study.id}
-                    className="relative h-screen w-screen shrink-0 overflow-hidden"
+                    className="relative h-screen w-[100vw] shrink-0 overflow-hidden"
                   >
                     {/* IMAGE */}
                     <motion.div
@@ -422,7 +432,7 @@ const CaseStudies = () => {
                         repeat: Infinity,
                         ease: "easeInOut",
                       }}
-                      className="absolute right-[10%] top-[14%] h-96 w-96 rounded-full bg-white/8 blur-3xl"
+                      className="absolute right-[10%] top-[14%] h-32 w-32 md:h-48 md:w-96 max-w-full rounded-full bg-white/8 blur-3xl"
                     />
 
                     {/* CONTENT */}
@@ -450,7 +460,7 @@ const CaseStudies = () => {
 
                           <motion.p
                             style={{ opacity: subOpacity, y: subY }}
-                            className="mb-5 text-[10px] uppercase tracking-[0.45em] text-white/55"
+                            className="mb-5 text-[10px] 2xl:text-xs uppercase tracking-[0.45em] text-white/55"
                           >
                             {study.subtitle}
                           </motion.p>
@@ -458,7 +468,7 @@ const CaseStudies = () => {
                           <div className="overflow-hidden mb-6">
                             <motion.h2
                               style={{ y: titleY, opacity: titleOpacity }}
-                              className="text-[3rem] font-black uppercase leading-[0.85] tracking-[-0.07em] text-white md:text-[7.5rem]"
+                              className="text-[2.2rem] font-bold uppercase leading-[0.85] tracking-[-0.07em] text-white md:text-[3rem] xl:text-5xl lg:text-[7.5rem]"
                             >
                               {study.title}
                             </motion.h2>
@@ -480,7 +490,7 @@ const CaseStudies = () => {
 
                             <div className="flex items-center gap-8">
                               <div className="text-right">
-                                <p className="mb-1 text-[10px] uppercase tracking-[0.45em] text-white/35">
+                                <p className="mb-1 text-[10px] 2xl:text-xs uppercase tracking-[0.45em] text-white/35">
                                   Result
                                 </p>
                                 <h3 className="text-lg font-bold uppercase tracking-[-0.04em] text-white md:text-2xl">
@@ -489,6 +499,7 @@ const CaseStudies = () => {
                               </div>
 
                               <motion.div
+                                onClick={() => navigate("/contact")}
                                 whileHover={{ scale: 1.08, rotate: 8 }}
                                 whileTap={{ scale: 0.96 }}
                                 transition={{
@@ -496,7 +507,7 @@ const CaseStudies = () => {
                                   stiffness: 260,
                                   damping: 16,
                                 }}
-                                className="group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 backdrop-blur-xl md:h-28 md:w-28"
+                                className="group relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-white/10 backdrop-blur-xl md:h-24 md:w-28 cursor-pointer"
                               >
                                 <motion.div
                                   animate={{ rotate: 360 }}
@@ -507,7 +518,7 @@ const CaseStudies = () => {
                                   }}
                                   className="absolute inset-0 rounded-full border border-dashed border-white/20"
                                 />
-                                <span className="relative z-10 text-[10px] uppercase tracking-[0.35em] text-white">
+                                <span className="relative z-10 text-[10px] 2xl:text-xs uppercase tracking-[0.35em] text-white">
                                   Explore
                                 </span>
                               </motion.div>
